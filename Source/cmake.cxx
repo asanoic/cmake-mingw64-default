@@ -1705,7 +1705,11 @@ std::unique_ptr<cmGlobalGenerator> cmake::EvaluateDefaultGlobalGenerator()
       return gen;
     }
   }
+
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(CMAKE_BOOT_MINGW)
+  if (cmSystemTools::FindProgram("g++").size()) {
+    return this->CreateGlobalGenerator("MinGW Makefiles");
+  }
   std::string found;
   // Try to find the newest VS installed on the computer and
   // use that as a default if -G is not specified
