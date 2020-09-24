@@ -30,6 +30,14 @@ function(cmake_initialize_per_config_variable _PREFIX _DOCSTRING)
       if (NOT "${_BUILD_TYPE}" STREQUAL "")
         string(TOUPPER "${_BUILD_TYPE}" _BUILD_TYPE)
         string(STRIP "${${_PREFIX}_${_BUILD_TYPE}_INIT}" _INIT)
+
+        string(FIND ${_BUILD_TYPE} "DEB" _IC_INDEX)
+        if("${_IC_INDEX}" STREQUAL "-1" AND "${_PREFIX}" STREQUAL "CMAKE_EXE_LINKER_FLAGS")
+          if(NOT MSVC)
+            set(_INIT "${_INIT} -s -Wl,--gc-sections")
+          endif()
+        endif()
+        
         set("${_PREFIX}_${_BUILD_TYPE}" "${_INIT}"
           CACHE STRING "${_DOCSTRING} during ${_BUILD_TYPE} builds.")
         mark_as_advanced("${_PREFIX}_${_BUILD_TYPE}")
